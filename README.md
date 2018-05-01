@@ -5,15 +5,13 @@ The immediate erasure of the digital identities of mass shoters prohibits effort
 
 ## Structure
 
-### Program.cs
+### program
 ...
-### GetNames.cs
+### get
 ...
-### ScoreNames.cs
+### score
 ...
-### ScrapeWeb.cs
-...
-### Archive 
+### scrape
 ...
 
 ## Installation
