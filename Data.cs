@@ -1,6 +1,6 @@
 using System;
 
-namespace Data
+namespace ASA
 {
     public class possibleName
     {
