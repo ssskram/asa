@@ -3571,9 +3571,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/ssskram/applications/ASA/getnames.csproj",
-      "projectName": "getnames",
-      "projectPath": "/home/ssskram/applications/ASA/getnames.csproj",
+      "projectUniqueName": "/home/ssskram/applications/ASA/asa.csproj",
+      "projectName": "asa",
+      "projectPath": "/home/ssskram/applications/ASA/asa.csproj",
       "packagesPath": "/home/ssskram/.nuget/packages/",
       "outputPath": "/home/ssskram/applications/ASA/obj/",
       "projectStyle": "PackageReference",

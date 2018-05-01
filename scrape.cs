@@ -1,21 +1,15 @@
 using System;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
+
 
 namespace ASA
 {
     class Scrape
     {
-        HttpClient client = new HttpClient();
-
         public async Task Queries(object names)
         {
+            // throw collected names for development purposes
             List<aggregatedName> a = names as List<aggregatedName>;
             foreach (var name in a)
             {
@@ -23,8 +17,7 @@ namespace ASA
             }
             await Task.Delay(1);
 
-            // hit social media APIs
-            // 
+            // begin scraping here
         }
 
     }

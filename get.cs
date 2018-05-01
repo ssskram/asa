@@ -100,7 +100,7 @@ namespace ASA
                 // get the proper nouns
                 foreach (Match match in n.Matches(article))
                 {
-                    int wordcount = CountWords(match.ToString());
+                    int wordcount = countWords(match.ToString());
                     if (match != null && wordcount > 1 && wordcount < 4)
                     {
                         possibleName pona = new possibleName()
@@ -118,7 +118,7 @@ namespace ASA
             return null;
         }
 
-        public static int CountWords(string s)
+        public static int countWords(string s)
         {
             MatchCollection collection = Regex.Matches(s, @"[\S]+");
             return collection.Count;

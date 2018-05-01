@@ -6,12 +6,12 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.0": {
-      "getnames/1.0.0": {
+      "asa/1.0.0": {
         "dependencies": {
           "Newtonsoft.Json": "10.0.3"
         },
         "runtime": {
-          "getnames.dll": {}
+          "asa.dll": {}
         }
       },
       "Microsoft.CSharp/4.3.0": {
@@ -390,7 +390,7 @@
     }
   },
   "libraries": {
-    "getnames/1.0.0": {
+    "asa/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
