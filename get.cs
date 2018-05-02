@@ -30,8 +30,8 @@ namespace ASA
             // query parameters
             string keywords = "identified OR suspect";
             string antikeywords = "drill OR training";
-            string pagesize = "10";
-            string page = "6";
+            string pagesize = "3";
+            string page = "1";
             string key = "df76585c7c104053896b14dd3be4d007";
 
             // dev time frame
@@ -63,7 +63,7 @@ namespace ASA
                 {
                     string article = null;
                     string url = item.url.ToString();
-                    Console.WriteLine("Getting article...");
+                    Console.WriteLine("Getting article:");
                     Console.WriteLine(url);
 
                     try
@@ -133,7 +133,7 @@ namespace ASA
                         possiblenames.Add(pona);
                     }
                 }
-                Console.WriteLine("OK, that's all of em.");
+                
                 return possiblenames;
             }
 
