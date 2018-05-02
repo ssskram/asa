@@ -35,6 +35,8 @@ namespace ASA
             string[] warm  = new string[] {
                 "reportedly",
                 "Reportedly",
+                "related",
+                "Related",
                 "described",
                 "Described",
                 "active",

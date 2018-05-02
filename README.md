@@ -7,12 +7,11 @@
 
 ### program
 
-Two modules:
-1. First, the name of an active shooter is picked up by continually scraping relevant news articles 
-2. Second, the name is used to query various APIs & scrape verious sites
+Two functions:
+1. `Get()`csharp the name of an active shooter is picked up by continually scraping relevant news articles 
+2. ``` Scrape() ``` the name is used to scrape various sites & APIs, and the data is dumped into an unstructured data store for sorting & retrieval
 
 ```csharp
-[Authorize]
 static async Task Main()
 {
     Get go = new Get();
