@@ -16,23 +16,43 @@ namespace ASA
 
         public async Task<object> getNames()
         {
-            // object of qualified names to be passed back to main
-            object an = null;
+            // object of "winning" names to be passed back to Main()
+            object ws = null;
 
             // list to populate with scored names    
             List<scoredName> names = new List<scoredName>();
 
-            // instantiate class to score possible names
+            // scoring class
             Score scorecard = new Score();
             
             Console.WriteLine("Getting all articles...");
     
-            var time = DateTime.UtcNow.AddDays(-30).ToString("s");
-            var key = "df76585c7c104053896b14dd3be4d007";
+            // query parameters
+            string keywords = "identified OR suspect";
+            string antikeywords = "drill OR training";
+            string pagesize = "10";
+            string page = "3";
+            string key = "df76585c7c104053896b14dd3be4d007";
+
+            // dev time frame
+            string from = "2018-04-04";
+            string to = "2018-04-04";
+
+            // prod time frame is same as cron
+            // string from = DateTime.UtcNow.AddMinutes(-5).ToString("s");
+            // string to = DateTime.UtcNow.ToString("s");
+
             string endpoint = String.Format
-                ("https://newsapi.org/v2/everything?q='active+shooter' AND (identified OR suspect) NOT (drill OR training)&language=en&pageSize=15&from=2018-04-04&to2018-04-04&apiKey={1}",
-                    time, // 0
-                    key); // 1
+                ("https://newsapi.org/v2/everything?q='active+shooter' AND ({0}) NOT ({1})&language=en&pageSize={2}&page={3}&from={4}&to{5}&apiKey={6}",
+                    keywords, // 0
+                    antikeywords, // 1
+                    pagesize, // 2
+                    page, // 3
+                    from, // 4
+                    to, // 5
+                    key); // 6
+
+            // get em
             string articles = await client.GetStringAsync(endpoint);
 
             if (articles != null)
@@ -41,11 +61,11 @@ namespace ASA
 
                 foreach (var item in all)
                 {
-                    string url = item.url.ToString();
-                    Console.WriteLine(url);
-                    Console.WriteLine("Getting article...");
-
                     string article = null;
+                    string url = item.url.ToString();
+                    Console.WriteLine("Getting article...");
+                    Console.WriteLine(url);
+
                     try
                     {
                         article = await client.GetStringAsync(url);
@@ -54,8 +74,7 @@ namespace ASA
                         int pTo = article.LastIndexOf("</body>");
                         article = article.Substring(pFrom, pTo - pFrom);
                     }
-                    catch
-                    {}
+                    catch {}
 
                     // get possible names
                     var possiblenames = getPossibleNames(article);
@@ -63,7 +82,7 @@ namespace ASA
                     if (possiblenames != null)
                     {
                         List<possibleName> ns = possiblenames as List<possibleName>;
-
+                        Console.WriteLine("Scoring each possible name...");
                         foreach (var pn in ns)
                         {
                             int score = scorecard.scoreNames(pn.value, pn.index, article);
@@ -75,13 +94,16 @@ namespace ASA
                             names.Add(qn);
                         }
                     }
+
                     Console.WriteLine("Done! Moving on...");
                 }
 
-                an = aggregateNames(names);
+                var an = aggregateNames(names);
+
+                ws = await selectWinners(an);
             }
 
-            return(an);
+            return(ws);
         }
 
         public static object getPossibleNames(string article)
@@ -97,9 +119,9 @@ namespace ASA
 
                 Console.WriteLine("Getting possible names...");
 
-                // get the proper nouns
                 foreach (Match match in n.Matches(article))
                 {
+                    // only take 1-3 word strings
                     int wordcount = countWords(match.ToString());
                     if (match != null && wordcount > 1 && wordcount < 4)
                     {
@@ -111,21 +133,17 @@ namespace ASA
                         possiblenames.Add(pona);
                     }
                 }
-                Console.WriteLine("OK, that's all of em.  Sending them back to be scored...");
+                Console.WriteLine("OK, that's all of em.");
                 return possiblenames;
             }
 
             return null;
         }
 
-        public static int countWords(string s)
-        {
-            MatchCollection collection = Regex.Matches(s, @"[\S]+");
-            return collection.Count;
-        }
-
         public static object aggregateNames(object sn)
         {
+            Console.WriteLine("...aggregating results...");
+
             List<scoredName> ns = sn as List<scoredName>;
 
             // hash to track duplicates to be merged
@@ -141,7 +159,7 @@ namespace ASA
                 {
                     an.Where(w => w.value == name.value).ToList().ForEach(s => s.score = s.score + name.score);
                 }
-                else if (name.score != 0)
+                else if (name.score > 10)
                 {
                     alreadyEncountered.Add(name.value); 
                     aggregatedName aa = new aggregatedName() 
@@ -154,6 +172,56 @@ namespace ASA
             }
 
            return(an);
+        }
+
+        public async Task<object> selectWinners(object an)
+        {
+            Console.WriteLine("...selecting the winners...");
+
+            List<aggregatedName> ns = an as List<aggregatedName>;
+
+            // list to populate with the winners
+            List<winner> ws = new List<winner>();
+
+            foreach (var i in ns)
+            {
+                // attempt to geocode the string to root out city names
+                string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
+                var endpoint =
+                    String.Format 
+                    ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
+                    i.value, // 0
+                    key); // 1
+                client.DefaultRequestHeaders.Clear();
+                try
+                {
+                    string response = await client.GetStringAsync(endpoint);
+                    dynamic status_check = JObject.Parse(response)["status"];
+                    if (status_check == "OK")
+                    {
+                        // loooooooooser
+                        continue;
+                    }
+                    else
+                    {
+                        winner w = new winner()
+                        {
+                            value = i.value,
+                            score = i.score
+                        };
+                        ws.Add(w);
+                    }
+                }
+                catch {}
+            }
+
+            return ws;
+        }
+
+        public static int countWords(string s)
+        {
+            MatchCollection collection = Regex.Matches(s, @"[\S]+");
+            return collection.Count;
         }
     }
 }

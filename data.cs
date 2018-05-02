@@ -17,4 +17,9 @@ namespace ASA
         public string value { get; set; }
         public int score { get; set; }
     }
+    public class winner
+    {
+        public string value { get; set; }
+        public int score { get; set; }
+    }
 }

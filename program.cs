@@ -8,12 +8,11 @@ namespace ASA
         // enter here
         static async Task Main()
         {
-            Get g = new Get();
-            await g.getNames();
-            var names = g.getNames().Result;
+            Get go = new Get();
+            var names = await go.getNames();
 
-            Scrape t = new Scrape();
-            await t.Queries(names);
+            Scrape run = new Scrape();
+            await run.Queries(names);
         }
     }
 }

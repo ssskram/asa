@@ -9,15 +9,23 @@ namespace ASA
     {
         public async Task Queries(object names)
         {
-            // throw collected names for development purposes
-            List<aggregatedName> a = names as List<aggregatedName>;
-            foreach (var name in a)
-            {
-                Console.WriteLine("Name = " + name.value + "and score  =  " + name.score);
-            }
-            await Task.Delay(1);
+            // high point
+            List<winner> a = names as List<winner>;
 
-            // begin scraping here
+            if (names != null)
+            {
+                foreach (var name in a)
+                {
+                    Console.WriteLine("Name = " + name.value + " and score = " + name.score);
+                }
+                await Task.Delay(1);
+
+                // begin scraping here
+                // await getFacebook()
+                // await getTwitter()
+                // await getYoutube()
+                // await getYaddaYadda()
+            }
         }
 
     }

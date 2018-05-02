@@ -1,12 +1,27 @@
 # Active Shooter Archive
 
 ## Purpose
-~~Capture~~ Attempt to capture the digital identity of active shooters as soon as that identity is made public.
+~~Capture~~ Attempt to capture the digital identity of an active shooter as soon as the individual is identified.
 
 ## Process
 
 ### program
-...
+
+Two modules:
+1. First, the name of an active shooter is picked up by continually scraping relevant news articles 
+2. Second, the name is used to query various APIs & scrape verious sites
+
+```csharp
+[Authorize]
+static async Task Main()
+{
+    Get go = new Get();
+    var names = await go.getNames();
+
+    Scrape run = new Scrape();
+    await run.Queries(names);
+}
+```
 ### get
 ...
 ### score

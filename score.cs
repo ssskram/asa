@@ -97,10 +97,10 @@ namespace ASA
                 {
                     if (article.Contains(x))
                     {
-                        bool check = FindDistance(index, x, article, "hot");
+                        bool check = findDistance(index, x, article, "hot");
                         if (check == true)
                         {
-                            score = score + 6;
+                            score = score + 7;
                         }
                     }
                 }
@@ -108,7 +108,7 @@ namespace ASA
                 {
                     if (article.Contains(x))
                     {
-                        bool check = FindDistance(index, x, article, "warm");
+                        bool check = findDistance(index, x, article, "warm");
                         if (check == true)
                         {
                             score = score + 2;
@@ -119,7 +119,7 @@ namespace ASA
                 {
                     if (article.Contains(x))
                     {
-                        bool check = FindDistance(index, x, article, "cool");
+                        bool check = findDistance(index, x, article, "cool");
                         if (check == true)
                         {
                             score = score + 1;
@@ -131,7 +131,7 @@ namespace ASA
             return score;            
         }
 
-        bool FindDistance(int index, string target, string article, string type) 
+        bool findDistance(int index, string target, string article, string type) 
         {
             bool result = false;
             int before = 0;
@@ -146,7 +146,7 @@ namespace ASA
             {
                 distance = 400;
             }
-            else
+            else // cool
             {
                 distance = 500;
             }
@@ -162,8 +162,7 @@ namespace ASA
                     before = newString.Length;
                 }
             }
-            catch (Exception e)
-            {Console.WriteLine(e);}
+            catch {}
 
             // check target after name 
             try
@@ -176,8 +175,7 @@ namespace ASA
                     after = newString.Length;
                 }
             }
-            catch (Exception e)
-            {Console.WriteLine(e);} 
+            catch {} 
 
             if ((before < distance && before > 0 && before != 0) || 
                 (after < distance && after  > 0 && before != 0))
