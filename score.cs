@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 
 namespace ASA
 {
@@ -10,57 +12,55 @@ namespace ASA
 
             string[] hot = new string[] {
                 "identified",
-                "Identified",
                 "identify",
-                "Identify",
-                "Confirmed",
                 "confirmed",
                 "suspect",
-                "Suspect",
                 "suspected",
-                "Suspected",
                 "police",
-                "Police",
+                "wound",
                 "wounded",
-                "Wounded",
                 "fatally",
                 "shooting",
-                "Shooting",
                 "shooter",
-                "Shooter",
+                "shot",
                 "according",
-                "Victims",
-                "victims"
+                "victims",
+                "attacker",
+                "self-inflicted",
+                "sunday",   
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday"
             };
             string[] warm  = new string[] {
                 "reportedly",
-                "Reportedly",
+                "reported",
                 "related",
-                "Related",
                 "described",
-                "Described",
+                "gun",
+                "accused",
+                "shot",
+                "turning",
+                "disgruntled",
+                "mental",
+                "health",
                 "active",
                 "fire",
-                "Active",
                 "resident",
-                "Resident",
-                "Sunday",   
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
                 "motive",
                 "investigate",
                 "reported",
-                "Reported",
                 "evidence",
                 "individuals",
                 "targeted",
+                "time",
                 "source",
+                "evidence",
                 "year",
-                "Sources"
+                "sources"
             };
             string [] cool = new string[] {
                 "have",
@@ -71,35 +71,37 @@ namespace ASA
                 "was",
                 "a",
                 "who",
+                "to",
                 "of",
                 "as",
                 "knew"
             };
 
-            int hwc = 0;
+            int wc = 0;
 
             foreach (string x in hot)
             {
                 if (name.Contains(x))
                 {
-                    hwc++;
+                    wc++;
                 }
             }
             foreach (string x in warm)
             {
                 if (name.Contains(x))
                 {
-                    hwc++;
+                    wc++;
                 }
             }
 
-            if (hwc == 0)
+            if (wc == 0)
             {
                 foreach (string x in hot)
                 {
-                    if (article.Contains(x))
+                    int[] occ = allIndexes(article, x);
+                    foreach(int i in occ)
                     {
-                        bool check = findDistance(index, x, article, "hot");
+                        bool check = findDistance(index, i, article, "hot");
                         if (check == true)
                         {
                             score = score + 7;
@@ -108,9 +110,10 @@ namespace ASA
                 }
                 foreach (string x in warm)
                 {
-                    if (article.Contains(x))
+                    int[] occ = allIndexes(article, x);
+                    foreach(int i in occ)
                     {
-                        bool check = findDistance(index, x, article, "warm");
+                        bool check = findDistance(index, i, article, "warm");
                         if (check == true)
                         {
                             score = score + 2;
@@ -119,9 +122,10 @@ namespace ASA
                 }
                 foreach (string x in cool)
                 {
-                    if (article.Contains(x))
+                    int[] occ = allIndexes(article, x);
+                    foreach(int i in occ)
                     {
-                        bool check = findDistance(index, x, article, "cool");
+                        bool check = findDistance(index, i, article, "cool");
                         if (check == true)
                         {
                             score = score + 1;
@@ -133,7 +137,20 @@ namespace ASA
             return score;            
         }
 
-        bool findDistance(int index, string target, string article, string type) 
+        public static int[] allIndexes(string str, string substr, bool ignoreCase = true)
+        {
+            var indexes = new List<int>();
+            int index = 0;
+
+            while ((index = str.IndexOf(substr, index, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) != -1)
+            {
+                indexes.Add(index++);
+            }
+
+            return indexes.ToArray();
+        }
+
+        bool findDistance(int index, int target, string article, string type) 
         {
             bool result = false;
             int before = 0;
@@ -156,12 +173,11 @@ namespace ASA
             // check target preceding name
             try
             {
-                int startIndex = article.IndexOf(target);
+                int startIndex = target;
                 int endIndex = index;
                 if (endIndex > startIndex)
                 {
-                    string newString = article.Substring(startIndex, endIndex - startIndex);
-                    before = newString.Length;
+                    before = endIndex - startIndex;
                 }
             }
             catch {}
@@ -170,11 +186,10 @@ namespace ASA
             try
             {
                 int startIndex = index;
-                int endIndex = article.LastIndexOf(target);
+                int endIndex = target;
                 if (endIndex > startIndex)
                 {
-                    string newString = article.Substring(startIndex, endIndex - startIndex);
-                    after = newString.Length;
+                    after = endIndex - startIndex;
                 }
             }
             catch {} 

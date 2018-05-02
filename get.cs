@@ -28,10 +28,10 @@ namespace ASA
             Console.WriteLine("Getting all articles...");
     
             // query parameters
-            string keywords = "identified OR suspect";
+            string keywords = "identified AND police AND suspect OR confirmed";
             string antikeywords = "drill OR training";
-            string pagesize = "3";
-            string page = "1";
+            string pagesize = "2";
+            string page = "40";
             string key = "df76585c7c104053896b14dd3be4d007";
 
             // dev time frame
@@ -133,7 +133,7 @@ namespace ASA
                         possiblenames.Add(pona);
                     }
                 }
-                
+
                 return possiblenames;
             }
 
@@ -159,7 +159,7 @@ namespace ASA
                 {
                     an.Where(w => w.value == name.value).ToList().ForEach(s => s.score = s.score + name.score);
                 }
-                else if (name.score > 10)
+                else if (name.score > 0)
                 {
                     alreadyEncountered.Add(name.value); 
                     aggregatedName aa = new aggregatedName() 
@@ -176,44 +176,59 @@ namespace ASA
 
         public async Task<object> selectWinners(object an)
         {
-            Console.WriteLine("...selecting the winners...");
+            await Task.Delay(1);
 
-            List<aggregatedName> ns = an as List<aggregatedName>;
+            Console.WriteLine("...selecting the winners...");
 
             // list to populate with the winners
             List<winner> ws = new List<winner>();
 
+            List<aggregatedName> ns = an as List<aggregatedName>;
+
+            var top = ns.OrderByDescending(i => i.score).Take(5);
+
             foreach (var i in ns)
             {
-                // attempt to geocode the string to root out city names
-                string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
-                var endpoint =
-                    String.Format 
-                    ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
-                    i.value, // 0
-                    key); // 1
-                client.DefaultRequestHeaders.Clear();
-                try
+                winner w = new winner()
                 {
-                    string response = await client.GetStringAsync(endpoint);
-                    dynamic status_check = JObject.Parse(response)["status"];
-                    if (status_check == "OK")
-                    {
-                        // loooooooooser
-                        continue;
-                    }
-                    else
-                    {
-                        winner w = new winner()
-                        {
-                            value = i.value,
-                            score = i.score
-                        };
-                        ws.Add(w);
-                    }
-                }
-                catch {}
+                    value = i.value,
+                    score = i.score
+                };
+                ws.Add(w);
             }
+
+            // foreach (var i in top)
+            // {
+            //     // attempt to geocode the string to root out city names
+            //     string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
+            //     var endpoint =
+            //         String.Format 
+            //         ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
+            //         i.value, // 0
+            //         key); // 1
+            //     client.DefaultRequestHeaders.Clear();
+            //     try
+            //     {
+            //         string response = await client.GetStringAsync(endpoint);
+            //         dynamic status_check = JObject.Parse(response)["status"];
+            //         if (status_check == "OK")
+            //         {
+            //             // loooooooooser
+            //             continue;
+            //         }
+            //         else
+            //         {
+            //             winner w = new winner()
+            //             {
+            //                 value = i.value,
+            //                 score = i.score
+            //             };
+            //             ws.Add(w);
+            //         }
+            //     }
+            //     catch {}
+
+            // }
 
             return ws;
         }
@@ -223,5 +238,7 @@ namespace ASA
             MatchCollection collection = Regex.Matches(s, @"[\S]+");
             return collection.Count;
         }
+
+
     }
 }
