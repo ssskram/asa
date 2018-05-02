@@ -30,13 +30,13 @@ namespace ASA
             // query parameters
             string keywords = "identified AND police AND suspect OR confirmed";
             string antikeywords = "drill OR training";
-            string pagesize = "2";
-            string page = "40";
+            string pagesize = "5";
+            string page = "3";
             string key = "df76585c7c104053896b14dd3be4d007";
 
             // dev time frame
-            string from = "2018-04-04";
-            string to = "2018-04-04";
+            string from = "2018-04-03";
+            string to = "2018-04-03";
 
             // prod time frame is same as cron
             // string from = DateTime.UtcNow.AddMinutes(-5).ToString("s");
@@ -187,7 +187,7 @@ namespace ASA
 
             var top = ns.OrderByDescending(i => i.score).Take(5);
 
-            foreach (var i in ns)
+            foreach (var i in top)
             {
                 winner w = new winner()
                 {
@@ -206,9 +206,10 @@ namespace ASA
             //         ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
             //         i.value, // 0
             //         key); // 1
-            //     client.DefaultRequestHeaders.Clear();
+            
             //     try
             //     {
+            //         client.DefaultRequestHeaders.Clear();
             //         string response = await client.GetStringAsync(endpoint);
             //         dynamic status_check = JObject.Parse(response)["status"];
             //         if (status_check == "OK")

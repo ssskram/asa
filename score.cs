@@ -27,13 +27,6 @@ namespace ASA
                 "victims",
                 "attacker",
                 "self-inflicted",
-                "sunday",   
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday"
             };
             string[] warm  = new string[] {
                 "reportedly",
@@ -60,7 +53,14 @@ namespace ASA
                 "source",
                 "evidence",
                 "year",
-                "sources"
+                "sources",
+                "sunday",   
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday"
             };
             string [] cool = new string[] {
                 "have",
@@ -104,7 +104,7 @@ namespace ASA
                         bool check = findDistance(index, i, article, "hot");
                         if (check == true)
                         {
-                            score = score + 7;
+                            score = score + 20;
                         }
                     }
                 }
