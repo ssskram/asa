@@ -5,7 +5,7 @@
 
 ## Process
 
-Whole kit and caboodle can run as a serverless function, or as a scheduled task
+Whole kit and caboodle can run on a cron job
 
 ### program
 
@@ -34,25 +34,26 @@ public async Task<object> getNames()
     // get relevant articles
 
         // for each relevant article, extract possible names
-        var possiblenames = getPossibleNames(article);
+        var possiblenames = getPossibleNames(article)
 
             // for each possible name, return a score 
-            int score = scorecard.scoreNames(pn.value, pn.index, article);
+            int score = scorecard.scoreNames(pn.value, pn.index, article)
 
     // aggregate all possible names, and merge duplicates
     var an = aggregateNames(names);
 
     // pass names through geocoder to remove city names
-    // then, take the top 3
+    // then, take the top tier
     ws = await selectWinners(an);
 
-    return(ws);
+    return(ws)
 }
 ```
 
 ### score
 
 ` scoreNames() ` : main method that delegates tasks and returns a score for each name
+
 ```csharp
 public int scoreNames(string name, int index, string article)
 {
@@ -67,13 +68,15 @@ public int scoreNames(string name, int index, string article)
     }
     
     // give 7 points for each hot word within 250 char. of name
-    bool check = findDistance(index, x, article, "hot");
+    bool check = findDistance(index, x, article, "hot")
 
     // give 2 points for each warm word within 400 char. of name
-    bool check = findDistance(index, x, article, "warm");
+    bool check = findDistance(index, x, article, "warm")
 
     // give 1 point for each cool word within 500 char. of name
     bool check = findDistance(index, x, article, "cool");
+
+    // ditch any names that contain words from Hot[] or Warm[]
 
     return result;
 }
