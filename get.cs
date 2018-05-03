@@ -187,49 +187,49 @@ namespace ASA
 
             var top = ns.OrderByDescending(i => i.score).Take(5);
 
-            foreach (var i in top)
-            {
-                winner w = new winner()
-                {
-                    value = i.value,
-                    score = i.score
-                };
-                ws.Add(w);
-            }
-
             // foreach (var i in top)
             // {
-            //     // attempt to geocode the string to root out city names
-            //     string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
-            //     var endpoint =
-            //         String.Format 
-            //         ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
-            //         i.value, // 0
-            //         key); // 1
-            
-            //     try
+            //     winner w = new winner()
             //     {
-            //         client.DefaultRequestHeaders.Clear();
-            //         string response = await client.GetStringAsync(endpoint);
-            //         dynamic status_check = JObject.Parse(response)["status"];
-            //         if (status_check == "OK")
-            //         {
-            //             // loooooooooser
-            //             continue;
-            //         }
-            //         else
-            //         {
-            //             winner w = new winner()
-            //             {
-            //                 value = i.value,
-            //                 score = i.score
-            //             };
-            //             ws.Add(w);
-            //         }
-            //     }
-            //     catch {}
-
+            //         value = i.value,
+            //         score = i.score
+            //     };
+            //     ws.Add(w);
             // }
+
+            foreach (var i in top)
+            {
+                // attempt to geocode the string to root out city names
+                string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
+                var endpoint =
+                    String.Format 
+                    ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
+                    i.value, // 0
+                    key); // 1
+            
+                try
+                {
+                    client.DefaultRequestHeaders.Clear();
+                    string response = await client.GetStringAsync(endpoint);
+                    dynamic status_check = JObject.Parse(response)["status"];
+                    if (status_check == "OK")
+                    {
+                        // loooooooooser
+                        continue;
+                    }
+                    else
+                    {
+                        winner w = new winner()
+                        {
+                            value = i.value,
+                            score = i.score
+                        };
+                        ws.Add(w);
+                    }
+                }
+                catch {}
+
+            }
 
             return ws;
         }
