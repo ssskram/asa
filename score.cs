@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace ASA
@@ -7,16 +8,34 @@ namespace ASA
     class Score
     {
         public int scoreNames(string name, int index, string article)  
-        {
+        {   
             int score = 0;
 
+            // split each name into individual words
+            var name_split = name.Where(Char.IsPunctuation).Distinct().ToArray();
+            var name_parts = name.Split().Select(x => x.Trim(name_split));
+
             string[] hot = new string[] {
+                "authorities",
+                "arrested",
                 "identified",
+                "investigators",
+                "attack",
+                "gunman",
+                "dead",
+                "deadly",
+                "killed",
                 "identify",
                 "confirmed",
+                "accused",
                 "suspect",
+                "opened",
+                "fire",
                 "suspected",
                 "police",
+                "gunshot",
+                "alleged",
+                "assailant",
                 "wound",
                 "wounded",
                 "fatally",
@@ -26,17 +45,23 @@ namespace ASA
                 "according",
                 "victims",
                 "attacker",
+                "motive",
                 "self-inflicted",
+                "alleged",
             };
             string[] warm  = new string[] {
                 "reportedly",
                 "reported",
                 "related",
                 "described",
+                "reporting",
+                "reports",
+                "opened",
                 "gun",
                 "accused",
                 "shot",
                 "turning",
+                "discovered",
                 "disgruntled",
                 "mental",
                 "health",
@@ -54,7 +79,7 @@ namespace ASA
                 "evidence",
                 "year",
                 "sources",
-                "sunday",   
+                "sunday",    
                 "monday",
                 "tuesday",
                 "wednesday",
@@ -64,6 +89,7 @@ namespace ASA
             };
             string [] cool = new string[] {
                 "have",
+                "who",
                 "that",
                 "the",
                 "in",
@@ -76,21 +102,71 @@ namespace ASA
                 "as",
                 "knew"
             };
+            string [] cold = new string[] {
+                "have",
+                "who",
+                "that",
+                "the",
+                "in",
+                "the",
+                "was",
+                "a",
+                "who",
+                "to",
+                "of",
+                "as",
+                "and",
+                "knew",
+                "sign",
+                "in",
+                "facebook",
+                "twitter",
+                "instagram",
+                "google",
+                "news",
+                "world",
+                "his",
+                "her",
+                "about",
+                "us",
+                "tag",
+                "log",
+                "ad",
+                "click",
+                "content",
+                "end",
+                "your",
+                "address",
+                "email",
+                "press"
+            };
 
+            // bypass names that contain substrings of hot[] or warm[] or cold[]
             int wc = 0;
-
             foreach (string x in hot)
             {
-                if (name.Contains(x))
+                bool contains = name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0;
+                if (contains == true)
                 {
                     wc++;
                 }
             }
             foreach (string x in warm)
             {
-                if (name.Contains(x))
+                bool contains = name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0;
+                if (contains == true)
                 {
                     wc++;
+                }
+            }
+            foreach (string x in cold)
+            {
+                foreach (string p in name_parts)
+                {
+                    if (p.Equals(x, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        wc++;
+                    }
                 }
             }
 
@@ -98,37 +174,70 @@ namespace ASA
             {
                 foreach (string x in hot)
                 {
-                    int[] occ = allIndexes(article, x);
-                    foreach(int i in occ)
+                    // get index for each occurence of hot word
+                    int[] occ_hot = allIndexes(article, x);
+
+                    foreach (string p in name_parts)
                     {
-                        bool check = findDistance(index, i, article, "hot");
-                        if (check == true)
+                        // get index for each occurence of name part
+                        int[] occ_np = allIndexes(article, p);
+
+                        foreach (int i in occ_hot)
                         {
-                            score = score + 20;
+                            foreach (int n in occ_np)
+                            {
+                                bool check = findDistance(n, i, article, "hot");
+                                if (check == true)
+                                {
+                                    score = score + 5;
+                                }
+                            }
                         }
                     }
                 }
                 foreach (string x in warm)
                 {
-                    int[] occ = allIndexes(article, x);
-                    foreach(int i in occ)
+                    // get index for each occurence of warm word
+                    int[] occ_warm = allIndexes(article, x);
+
+                    foreach (string p in name_parts)
                     {
-                        bool check = findDistance(index, i, article, "warm");
-                        if (check == true)
+                        // get index for each occurence of name part
+                        int[] occ_np = allIndexes(article, p);
+
+                        foreach (int i in occ_warm)
                         {
-                            score = score + 2;
+                            foreach (int n in occ_np)
+                            {
+                                bool check = findDistance(n, i, article, "warm");
+                                if (check == true)
+                                {
+                                    score = score + 3;
+                                }
+                            }
                         }
                     }
                 }
                 foreach (string x in cool)
                 {
-                    int[] occ = allIndexes(article, x);
-                    foreach(int i in occ)
+                    // get index for each occurence of warm word
+                    int[] occ_cool = allIndexes(article, x);
+
+                    foreach (string p in name_parts)
                     {
-                        bool check = findDistance(index, i, article, "cool");
-                        if (check == true)
+                        // get index for each occurence of name part
+                        int[] occ_np = allIndexes(article, p);
+
+                        foreach (int i in occ_cool)
                         {
-                            score = score + 1;
+                            foreach (int n in occ_np)
+                            {
+                                bool check = findDistance(n, i, article, "cool");
+                                if (check == true)
+                                {
+                                    score = score + 1;
+                                }
+                            }
                         }
                     }
                 }
@@ -159,15 +268,15 @@ namespace ASA
 
             if (type == "hot")
             {
-                distance = 250;
+                distance = 150;
             }
             else if (type == "warm")
             {
-                distance = 400;
+                distance = 200;
             }
             else // cool
             {
-                distance = 500;
+                distance = 250;
             }
             
             // check target preceding name

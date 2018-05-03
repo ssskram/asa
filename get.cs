@@ -28,10 +28,10 @@ namespace ASA
             Console.WriteLine("Getting all articles...");
     
             // query parameters
-            string keywords = "identified AND police AND suspect OR confirmed";
+            string keywords = "identified OR police OR suspect OR confirmed OR active";
             string antikeywords = "drill OR training";
-            string pagesize = "5";
-            string page = "3";
+            string pagesize = "2";
+            string page = "4";
             string key = "df76585c7c104053896b14dd3be4d007";
 
             // dev time frame
@@ -43,7 +43,7 @@ namespace ASA
             // string to = DateTime.UtcNow.ToString("s");
 
             string endpoint = String.Format
-                ("https://newsapi.org/v2/everything?q='active+shooter' AND ({0}) NOT ({1})&language=en&pageSize={2}&page={3}&from={4}&to{5}&apiKey={6}",
+                ("https://newsapi.org/v2/everything?q='+shooter' AND ({0}) NOT ({1})&language=en&pageSize={2}&page={3}&from={4}&to{5}&apiKey={6}",
                     keywords, // 0
                     antikeywords, // 1
                     pagesize, // 2
@@ -187,48 +187,14 @@ namespace ASA
 
             var top = ns.OrderByDescending(i => i.score).Take(5);
 
-            // foreach (var i in top)
-            // {
-            //     winner w = new winner()
-            //     {
-            //         value = i.value,
-            //         score = i.score
-            //     };
-            //     ws.Add(w);
-            // }
-
-            foreach (var i in top)
+            foreach (var i in ns)
             {
-                // attempt to geocode the string to root out city names
-                string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
-                var endpoint =
-                    String.Format 
-                    ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
-                    i.value, // 0
-                    key); // 1
-            
-                try
+                winner w = new winner()
                 {
-                    client.DefaultRequestHeaders.Clear();
-                    string response = await client.GetStringAsync(endpoint);
-                    dynamic status_check = JObject.Parse(response)["status"];
-                    if (status_check == "OK")
-                    {
-                        // loooooooooser
-                        continue;
-                    }
-                    else
-                    {
-                        winner w = new winner()
-                        {
-                            value = i.value,
-                            score = i.score
-                        };
-                        ws.Add(w);
-                    }
-                }
-                catch {}
-
+                    value = i.value,
+                    score = i.score
+                };
+                ws.Add(w);
             }
 
             return ws;
