@@ -78,7 +78,7 @@ public int scoreNames(string name, int index, string article)
                 // if distance is < 75 characters, add 3 points
 
             // find distance between every instance of warm word
-            int[] occ_hot = allIndexes(article, x);
+            int[] occ_warm = allIndexes(article, x);
 
                 // if distance is < 150 characters, add 1 points
 
