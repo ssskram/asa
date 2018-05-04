@@ -62,7 +62,8 @@ namespace ASA
                 foreach (var item in all)
                 {
                     string article = null;
-                    string url = item.url.ToString();
+                    string url = "https://www.tennessean.com/story/news/2018/04/22/antioch-tn-waffle-house-shooting-naked-suspect/540033002/";
+                    // string url = item.url.ToString();
                     Console.WriteLine("Getting article:");
                     Console.WriteLine(url);
 

@@ -65,7 +65,7 @@ namespace ASA
                         {
                             foreach (int z in occ_np)
                             {
-                                bool check = findDistance(i, z, article, "hot");
+                                bool check = findDistance(i, z, "hot");
                                 if (check == true)
                                 {
                                     score = score + 3;
@@ -84,7 +84,7 @@ namespace ASA
                         {
                             foreach (int z in occ_np)
                             {
-                                bool check = findDistance(i, z, article, "warm");
+                                bool check = findDistance(i, z, "warm");
                                 if (check == true)
                                 {
                                     score = score + 1;
@@ -111,7 +111,7 @@ namespace ASA
             return indexes.ToArray();
         }
 
-        bool findDistance(int index, int target, string article, string type) 
+        bool findDistance(int index, int target, string type) 
         {
             bool result = false;
             int before = 0;
@@ -283,6 +283,9 @@ namespace ASA
                 "end",
                 "your",
                 "address",
+                "site",
+                "header",
+                "footer",
                 "email",
                 "press"
             };     
