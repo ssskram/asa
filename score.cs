@@ -7,10 +7,12 @@ namespace ASA
 {
     class Score
     {
-        public int scoreNames(string name, int index, string article)  
-        {   
+        public int scoreNames(string name, int index, string article)
+        {
             int score = 0;
             int wd = 0;
+            int[] occ_hot = null;
+            int[] occ_warm = null;
 
             // split each name into individual words
             var name_split = name.Where(Char.IsPunctuation).Distinct().ToArray();
@@ -19,7 +21,7 @@ namespace ASA
             // get arrays of keywords
             string[] hot = getHot();
             string[] warm = getWarm();
-            string[] cold = getCold();       
+            string[] cold = getCold();
 
             foreach (string x in hot)
             {
@@ -58,7 +60,7 @@ namespace ASA
                     foreach (string x in hot)
                     {
                         // get index for each occurence of hot word
-                        int[] occ_hot = allIndexes(article, x);
+                        occ_hot = allIndexes(article, x);
 
                         // for each occurence of hot word, find distance between hot word & indexes of name part
                         foreach(int i in occ_hot)
@@ -77,7 +79,7 @@ namespace ASA
                     foreach (string x in warm)
                     {
                         // get index for each occurence of warm word
-                        int[] occ_warm = allIndexes(article, x);
+                        occ_warm = allIndexes(article, x);
 
                         // for each occurence of hot word, find distance between warm word & indexes of name part
                         foreach(int i in occ_warm)
@@ -95,7 +97,7 @@ namespace ASA
                 }
             }
 
-            return score;            
+            return score;
         }
 
         public static int[] allIndexes(string str, string substr, bool ignoreCase = true)
@@ -111,7 +113,7 @@ namespace ASA
             return indexes.ToArray();
         }
 
-        bool findDistance(int index, int target, string type) 
+        bool findDistance(int index, int target, string type)
         {
             bool result = false;
             int before = 0;
@@ -126,7 +128,7 @@ namespace ASA
             {
                 distance = 150;
             }
-            
+
             // check target preceding name
             try
             {
@@ -139,7 +141,7 @@ namespace ASA
             }
             catch {}
 
-            // check target after name 
+            // check target after name
             try
             {
                 int startIndex = index;
@@ -149,9 +151,9 @@ namespace ASA
                     after = endIndex - startIndex;
                 }
             }
-            catch {} 
+            catch {}
 
-            if ((before < distance && before > 0 && before != 0) || 
+            if ((before < distance && before > 0 && before != 0) ||
                 (after < distance && after  > 0 && before != 0))
                 {
                     result = true;
@@ -210,6 +212,9 @@ namespace ASA
                 "reports",
                 "opened",
                 "gun",
+                "guns",
+                "manhunt",
+                "believed",
                 "accused",
                 "shot",
                 "turning",
@@ -231,7 +236,7 @@ namespace ASA
                 "evidence",
                 "year",
                 "sources",
-                "sunday",    
+                "sunday",
                 "monday",
                 "tuesday",
                 "wednesday",
@@ -288,7 +293,7 @@ namespace ASA
                 "footer",
                 "email",
                 "press"
-            };     
+            };
 
             return cold;
         }

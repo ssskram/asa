@@ -31,7 +31,7 @@ namespace ASA
             string keywords = "identified OR police OR suspect OR confirmed OR active";
             string antikeywords = "drill OR training";
             string pagesize = "2";
-            string page = "9";
+            string page = "12";
             string key = "df76585c7c104053896b14dd3be4d007";
 
             // dev time frame
@@ -62,7 +62,7 @@ namespace ASA
                 foreach (var item in all)
                 {
                     string article = null;
-                    string url = "https://www.tennessean.com/story/news/2018/04/22/antioch-tn-waffle-house-shooting-naked-suspect/540033002/";
+                    string url = "https://www.usatoday.com/story/news/nation/2017/10/02/who-stephen-paddock/722267001";
                     // string url = item.url.ToString();
                     Console.WriteLine("Getting article:");
                     Console.WriteLine(url);
