@@ -5,8 +5,6 @@
 
 ## Process
 
-Whole kit and caboodle can run on a cron job
-
 ### program
 
 Two functions:
@@ -57,28 +55,34 @@ public async Task<object> getNames()
 ```csharp
 public int scoreNames(string name, int index, string article)
 {
-    string[] hot = new string[] {
-        // keywords that are the most valuable in relation to name
-    }
-    string[] warm = new string[] {
-        // keywords that are pretty valuable in relation to name
-    }
-    string[] warm = new string[] {
-        // other word bits that always seem to get used in declarative sentences
-    }
-    
-    // give 7 points for each hot word within 250 char. of name
-    bool check = findDistance(index, x, article, "hot")
+    // collect points here
+    int score;
 
-    // give 2 points for each warm word within 400 char. of name
-    bool check = findDistance(index, x, article, "warm")
+    // return keywords that are most valuable in relation to name
+    string[] hot = getHot();
+    // return keywords that are pretty valuable in relation to name
+    string[] warm = getWarm();  
+    // return additional keywords to filter names against
+    string[] cold = getCold();         
 
-    // give 1 point for each cool word within 500 char. of name
-    bool check = findDistance(index, x, article, "cool");
+    // filter out names against exact matches of name & keywords
 
-    // ditch any names that contain words from Hot[] or Warm[]
+    // split name into it's comoosite parts, "name_parts"
+        
+        // for every instance of name_part
+        int[] occ_np = allIndexes(article, p);
 
-    return result;
+            // find distance between every instance of hot word
+            int[] occ_hot = allIndexes(article, x);
+
+                // if distance is < 75 characters, add 3 points
+
+            // find distance between every instance of warm word
+            int[] occ_hot = allIndexes(article, x);
+
+                // if distance is < 150 characters, add 1 points
+
+    return score;
 }
 ```
 

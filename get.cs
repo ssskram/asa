@@ -31,7 +31,7 @@ namespace ASA
             string keywords = "identified OR police OR suspect OR confirmed OR active";
             string antikeywords = "drill OR training";
             string pagesize = "2";
-            string page = "4";
+            string page = "7";
             string key = "df76585c7c104053896b14dd3be4d007";
 
             // dev time frame
@@ -185,16 +185,48 @@ namespace ASA
 
             List<aggregatedName> ns = an as List<aggregatedName>;
 
-            var top = ns.OrderByDescending(i => i.score).Take(5);
+            var top = ns.OrderByDescending(i => i.score).Take(7);
 
-            foreach (var i in ns)
+            // foreach (var i in ns)
+            // {
+            //     winner w = new winner()
+            //     {
+            //         value = i.value,
+            //         score = i.score
+            //     };
+            //     ws.Add(w);
+            // }
+
+            foreach (var i in top)
             {
-                winner w = new winner()
+                // attempt to geocode the string to root out city names
+                string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
+                var endpoint =
+                    String.Format 
+                    ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
+                    i.value, // 0
+                    key); // 1
+                client.DefaultRequestHeaders.Clear();
+                try
                 {
-                    value = i.value,
-                    score = i.score
-                };
-                ws.Add(w);
+                    string response = await client.GetStringAsync(endpoint);
+                    dynamic status_check = JObject.Parse(response)["status"];
+                    if (status_check == "OK")
+                    {
+                        // loooooooooser
+                        continue;
+                    }
+                    else
+                    {
+                        winner w = new winner()
+                        {
+                            value = i.value,
+                            score = i.score
+                        };
+                        ws.Add(w);
+                    }
+                }
+                catch {}
             }
 
             return ws;

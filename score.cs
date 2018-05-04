@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 
 namespace ASA
 {
@@ -10,11 +10,158 @@ namespace ASA
         public int scoreNames(string name, int index, string article)  
         {   
             int score = 0;
+            int wd = 0;
 
             // split each name into individual words
             var name_split = name.Where(Char.IsPunctuation).Distinct().ToArray();
             var name_parts = name.Split().Select(x => x.Trim(name_split));
 
+            // get arrays of keywords
+            string[] hot = getHot();
+            string[] warm = getWarm();
+            string[] cold = getCold();       
+
+            foreach (string x in hot)
+            {
+                bool contains = name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0;
+                if (contains == true)
+                {
+                    wd++;
+                }
+            }
+            foreach (string x in warm)
+            {
+                bool contains = name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0;
+                if (contains == true)
+                {
+                    wd++;
+                }
+            }
+            foreach (string p in name_parts)
+            {
+                foreach (string x in cold)
+                {
+                    if (p.ToLower().Equals(x))
+                    {
+                        wd++;
+                    }
+                }
+            }
+
+            if (wd == 0)
+            {
+                foreach (string p in name_parts)
+                {
+                    // get index for every occurence of name part
+                    int[] occ_np = allIndexes(article, p);
+
+                    foreach (string x in hot)
+                    {
+                        // get index for each occurence of hot word
+                        int[] occ_hot = allIndexes(article, x);
+
+                        // for each occurence of hot word, find distance between hot word & indexes of name part
+                        foreach(int i in occ_hot)
+                        {
+                            foreach (int z in occ_np)
+                            {
+                                bool check = findDistance(i, z, article, "hot");
+                                if (check == true)
+                                {
+                                    score = score + 3;
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (string x in warm)
+                    {
+                        // get index for each occurence of warm word
+                        int[] occ_warm = allIndexes(article, x);
+
+                        // for each occurence of hot word, find distance between warm word & indexes of name part
+                        foreach(int i in occ_warm)
+                        {
+                            foreach (int z in occ_np)
+                            {
+                                bool check = findDistance(i, z, article, "warm");
+                                if (check == true)
+                                {
+                                    score = score + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return score;            
+        }
+
+        public static int[] allIndexes(string str, string substr, bool ignoreCase = true)
+        {
+            var indexes = new List<int>();
+            int index = 0;
+
+            while ((index = str.IndexOf(substr, index, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) != -1)
+            {
+                indexes.Add(index++);
+            }
+
+            return indexes.ToArray();
+        }
+
+        bool findDistance(int index, int target, string article, string type) 
+        {
+            bool result = false;
+            int before = 0;
+            int after = 0;
+            int distance;
+
+            if (type == "hot")
+            {
+                distance = 75;
+            }
+            else // warm
+            {
+                distance = 150;
+            }
+            
+            // check target preceding name
+            try
+            {
+                int startIndex = target;
+                int endIndex = index;
+                if (endIndex > startIndex)
+                {
+                    before = endIndex - startIndex;
+                }
+            }
+            catch {}
+
+            // check target after name 
+            try
+            {
+                int startIndex = index;
+                int endIndex = target;
+                if (endIndex > startIndex)
+                {
+                    after = endIndex - startIndex;
+                }
+            }
+            catch {} 
+
+            if ((before < distance && before > 0 && before != 0) || 
+                (after < distance && after  > 0 && before != 0))
+                {
+                    result = true;
+                }
+
+            return result;
+        }
+
+        public static string[] getHot()
+        {
             string[] hot = new string[] {
                 "authorities",
                 "arrested",
@@ -49,6 +196,11 @@ namespace ASA
                 "self-inflicted",
                 "alleged",
             };
+
+            return hot;
+        }
+        public static string[] getWarm()
+        {
             string[] warm  = new string[] {
                 "reportedly",
                 "reported",
@@ -87,28 +239,20 @@ namespace ASA
                 "friday",
                 "saturday"
             };
-            string [] cool = new string[] {
-                "have",
-                "who",
-                "that",
-                "the",
-                "in",
-                "the",
-                "was",
-                "a",
-                "who",
-                "to",
-                "of",
-                "as",
-                "knew"
-            };
+
+            return warm;
+        }
+        public static string[] getCold()
+        {
             string [] cold = new string[] {
                 "have",
                 "who",
                 "that",
                 "the",
+                "you",
+                "your",
                 "in",
-                "the",
+                "they",
                 "was",
                 "a",
                 "who",
@@ -117,6 +261,8 @@ namespace ASA
                 "as",
                 "and",
                 "knew",
+                "not",
+                "real",
                 "sign",
                 "in",
                 "facebook",
@@ -139,177 +285,9 @@ namespace ASA
                 "address",
                 "email",
                 "press"
-            };
+            };     
 
-            // bypass names that contain substrings of hot[] or warm[] or cold[]
-            int wc = 0;
-            foreach (string x in hot)
-            {
-                bool contains = name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0;
-                if (contains == true)
-                {
-                    wc++;
-                }
-            }
-            foreach (string x in warm)
-            {
-                bool contains = name.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0;
-                if (contains == true)
-                {
-                    wc++;
-                }
-            }
-            foreach (string x in cold)
-            {
-                foreach (string p in name_parts)
-                {
-                    if (p.Equals(x, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        wc++;
-                    }
-                }
-            }
-
-            if (wc == 0)
-            {
-                foreach (string x in hot)
-                {
-                    // get index for each occurence of hot word
-                    int[] occ_hot = allIndexes(article, x);
-
-                    foreach (string p in name_parts)
-                    {
-                        // get index for each occurence of name part
-                        int[] occ_np = allIndexes(article, p);
-
-                        foreach (int i in occ_hot)
-                        {
-                            foreach (int n in occ_np)
-                            {
-                                bool check = findDistance(n, i, article, "hot");
-                                if (check == true)
-                                {
-                                    score = score + 5;
-                                }
-                            }
-                        }
-                    }
-                }
-                foreach (string x in warm)
-                {
-                    // get index for each occurence of warm word
-                    int[] occ_warm = allIndexes(article, x);
-
-                    foreach (string p in name_parts)
-                    {
-                        // get index for each occurence of name part
-                        int[] occ_np = allIndexes(article, p);
-
-                        foreach (int i in occ_warm)
-                        {
-                            foreach (int n in occ_np)
-                            {
-                                bool check = findDistance(n, i, article, "warm");
-                                if (check == true)
-                                {
-                                    score = score + 3;
-                                }
-                            }
-                        }
-                    }
-                }
-                foreach (string x in cool)
-                {
-                    // get index for each occurence of warm word
-                    int[] occ_cool = allIndexes(article, x);
-
-                    foreach (string p in name_parts)
-                    {
-                        // get index for each occurence of name part
-                        int[] occ_np = allIndexes(article, p);
-
-                        foreach (int i in occ_cool)
-                        {
-                            foreach (int n in occ_np)
-                            {
-                                bool check = findDistance(n, i, article, "cool");
-                                if (check == true)
-                                {
-                                    score = score + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return score;            
-        }
-
-        public static int[] allIndexes(string str, string substr, bool ignoreCase = true)
-        {
-            var indexes = new List<int>();
-            int index = 0;
-
-            while ((index = str.IndexOf(substr, index, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) != -1)
-            {
-                indexes.Add(index++);
-            }
-
-            return indexes.ToArray();
-        }
-
-        bool findDistance(int index, int target, string article, string type) 
-        {
-            bool result = false;
-            int before = 0;
-            int after = 0;
-            int distance;
-
-            if (type == "hot")
-            {
-                distance = 150;
-            }
-            else if (type == "warm")
-            {
-                distance = 200;
-            }
-            else // cool
-            {
-                distance = 250;
-            }
-            
-            // check target preceding name
-            try
-            {
-                int startIndex = target;
-                int endIndex = index;
-                if (endIndex > startIndex)
-                {
-                    before = endIndex - startIndex;
-                }
-            }
-            catch {}
-
-            // check target after name 
-            try
-            {
-                int startIndex = index;
-                int endIndex = target;
-                if (endIndex > startIndex)
-                {
-                    after = endIndex - startIndex;
-                }
-            }
-            catch {} 
-
-            if ((before < distance && before > 0 && before != 0) || 
-                (after < distance && after  > 0 && before != 0))
-                {
-                    result = true;
-                }
-
-            return result;
+            return cold;
         }
     }
 }
