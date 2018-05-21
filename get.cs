@@ -18,30 +18,23 @@ namespace ASA
         {
             // object of "winning" names to be passed back to Main()
             object ws = null;
-
             // list to populate with scored names    
             List<scoredName> names = new List<scoredName>();
-
             // scoring class
             Score scorecard = new Score();
-            
             Console.WriteLine("Getting all articles...");
-    
             // query parameters
             string keywords = "identified OR police OR suspect OR confirmed OR active";
             string antikeywords = "drill OR training";
-            string pagesize = "2";
-            string page = "12";
+            string pagesize = "1";
+            string page = "4";
             string key = "df76585c7c104053896b14dd3be4d007";
-
             // dev time frame
-            string from = "2018-04-03";
-            string to = "2018-04-03";
-
+            string from = "2018-05-18";
+            string to = "2018-05-18";
             // prod time frame is same as cron
             // string from = DateTime.UtcNow.AddMinutes(-5).ToString("s");
             // string to = DateTime.UtcNow.ToString("s");
-
             string endpoint = String.Format
                 ("https://newsapi.org/v2/everything?q='+shooter' AND ({0}) NOT ({1})&language=en&pageSize={2}&page={3}&from={4}&to{5}&apiKey={6}",
                     keywords, // 0
@@ -51,22 +44,17 @@ namespace ASA
                     from, // 4
                     to, // 5
                     key); // 6
-
             // get em
             string articles = await client.GetStringAsync(endpoint);
-
             if (articles != null)
             {
                 dynamic all = JObject.Parse(articles)["articles"];
-
                 foreach (var item in all)
                 {
                     string article = null;
-                    string url = "https://www.usatoday.com/story/news/nation/2017/10/02/who-stephen-paddock/722267001";
-                    // string url = item.url.ToString();
+                    string url = item.url.ToString();
                     Console.WriteLine("Getting article:");
                     Console.WriteLine(url);
-
                     try
                     {
                         article = await client.GetStringAsync(url);
@@ -76,10 +64,8 @@ namespace ASA
                         article = article.Substring(pFrom, pTo - pFrom);
                     }
                     catch {}
-
                     // get possible names
                     var possiblenames = getPossibleNames(article);
-
                     if (possiblenames != null)
                     {
                         List<possibleName> ns = possiblenames as List<possibleName>;
@@ -95,15 +81,11 @@ namespace ASA
                             names.Add(qn);
                         }
                     }
-
                     Console.WriteLine("Done! Moving on...");
                 }
-
                 var an = aggregateNames(names);
-
                 ws = await selectWinners(an);
             }
-
             return(ws);
         }
 
@@ -114,12 +96,9 @@ namespace ASA
                 // pattern to identify possible names
                 string namePattern = @"(([A-Z]([a-z]+|\.+))+(\s[A-Z][a-z]+)+)";
                 Regex n = new Regex(namePattern);
-
                 // list to populate with possible names
                 List<possibleName> possiblenames = new List<possibleName>();
-
                 Console.WriteLine("Getting possible names...");
-
                 foreach (Match match in n.Matches(article))
                 {
                     // only take 1-3 word strings
@@ -134,25 +113,19 @@ namespace ASA
                         possiblenames.Add(pona);
                     }
                 }
-
                 return possiblenames;
             }
-
             return null;
         }
 
         public static object aggregateNames(object sn)
         {
             Console.WriteLine("...aggregating results...");
-
             List<scoredName> ns = sn as List<scoredName>;
-
             // hash to track duplicates to be merged
             HashSet<string> alreadyEncountered = new HashSet<string>();
-
             // list to populate with aggregated names
             List<aggregatedName> an = new List<aggregatedName>();
-
             // aggregate the scores from repeated names
             foreach (var name in ns)
             {
@@ -171,21 +144,15 @@ namespace ASA
                     an.Add(aa);
                 }
             }
-
            return(an);
         }
 
         public async Task<object> selectWinners(object an)
         {
-            await Task.Delay(1);
-
             Console.WriteLine("...selecting the winners...");
-
             // list to populate with the winners
             List<winner> ws = new List<winner>();
-
             List<aggregatedName> ns = an as List<aggregatedName>;
-
             var top = ns.OrderByDescending(i => i.score).Take(7);
 
             // foreach (var i in ns)
@@ -229,7 +196,6 @@ namespace ASA
                 }
                 catch {}
             }
-
             return ws;
         }
 
@@ -238,7 +204,5 @@ namespace ASA
             MatchCollection collection = Regex.Matches(s, @"[\S]+");
             return collection.Count;
         }
-
-
     }
 }
