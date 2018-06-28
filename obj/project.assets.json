@@ -3571,11 +3571,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/ssskram/applications/ASA/asa.csproj",
+      "projectUniqueName": "/home/ssskram/Applications/asa/asa/asa.csproj",
       "projectName": "asa",
-      "projectPath": "/home/ssskram/applications/ASA/asa.csproj",
+      "projectPath": "/home/ssskram/Applications/asa/asa/asa.csproj",
       "packagesPath": "/home/ssskram/.nuget/packages/",
-      "outputPath": "/home/ssskram/applications/ASA/obj/",
+      "outputPath": "/home/ssskram/Applications/asa/asa/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/share/dotnet/sdk/NuGetFallbackFolder"
@@ -3605,12 +3605,12 @@
         "dependencies": {
           "Microsoft.NETCore.App": {
             "target": "Package",
-            "version": "2.0.0",
+            "version": "[2.0.0, )",
             "autoReferenced": true
           },
           "Newtonsoft.Json": {
             "target": "Package",
-            "version": "10.0.3"
+            "version": "[10.0.3, )"
           }
         },
         "imports": [

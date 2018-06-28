@@ -30,8 +30,8 @@ namespace ASA
             string page = "4";
             string key = "df76585c7c104053896b14dd3be4d007";
             // dev time frame
-            string from = "2018-05-18";
-            string to = "2018-05-18";
+            string from = "2018-05-27";
+            string to = "2018-05-29";
             // prod time frame is same as cron
             // string from = DateTime.UtcNow.AddMinutes(-5).ToString("s");
             // string to = DateTime.UtcNow.ToString("s");
@@ -155,47 +155,48 @@ namespace ASA
             List<aggregatedName> ns = an as List<aggregatedName>;
             var top = ns.OrderByDescending(i => i.score).Take(7);
 
-            // foreach (var i in ns)
+            foreach (var i in ns)
+            {
+                winner w = new winner()
+                {
+                    value = i.value,
+                    score = i.score
+                };
+                ws.Add(w);
+            }
+
+            // foreach (var i in top)
             // {
-            //     winner w = new winner()
+            //     // attempt to geocode the string to root out city names
+            //     string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
+            //     var endpoint =
+            //         String.Format 
+            //         ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
+            //         i.value, // 0
+            //         key); // 1
+            //     client.DefaultRequestHeaders.Clear();
+            //     try
             //     {
-            //         value = i.value,
-            //         score = i.score
-            //     };
-            //     ws.Add(w);
+            //         string response = await client.GetStringAsync(endpoint);
+            //         dynamic status_check = JObject.Parse(response)["status"];
+            //         if (status_check == "OK")
+            //         {
+            //             // loooooooooser
+            //             continue;
+            //         }
+            //         else
+            //         {
+            //             winner w = new winner()
+            //             {
+            //                 value = i.value,
+            //                 score = i.score
+            //             };
+            //             ws.Add(w);
+            //         }
+            //     }
+            //     catch {}
             // }
 
-            foreach (var i in top)
-            {
-                // attempt to geocode the string to root out city names
-                string key = "AIzaSyA8hIHTerE_b51886Q761BNQ53sQUsI97E";
-                var endpoint =
-                    String.Format 
-                    ("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}",
-                    i.value, // 0
-                    key); // 1
-                client.DefaultRequestHeaders.Clear();
-                try
-                {
-                    string response = await client.GetStringAsync(endpoint);
-                    dynamic status_check = JObject.Parse(response)["status"];
-                    if (status_check == "OK")
-                    {
-                        // loooooooooser
-                        continue;
-                    }
-                    else
-                    {
-                        winner w = new winner()
-                        {
-                            value = i.value,
-                            score = i.score
-                        };
-                        ws.Add(w);
-                    }
-                }
-                catch {}
-            }
             return ws;
         }
 

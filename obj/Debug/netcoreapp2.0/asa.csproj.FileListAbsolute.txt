@@ -9,3 +9,14 @@
 /home/ssskram/applications/ASA/obj/Debug/netcoreapp2.0/asa.dll
 /home/ssskram/applications/ASA/obj/Debug/netcoreapp2.0/asa.pdb
 /home/ssskram/applications/ASA/obj/Debug/netcoreapp2.0/asa.csprojResolveAssemblyReference.cache
+/home/ssskram/Applications/asa/asa/bin/Debug/netcoreapp2.0/asa.deps.json
+/home/ssskram/Applications/asa/asa/bin/Debug/netcoreapp2.0/asa.runtimeconfig.json
+/home/ssskram/Applications/asa/asa/bin/Debug/netcoreapp2.0/asa.runtimeconfig.dev.json
+/home/ssskram/Applications/asa/asa/bin/Debug/netcoreapp2.0/asa.dll
+/home/ssskram/Applications/asa/asa/bin/Debug/netcoreapp2.0/asa.pdb
+/home/ssskram/Applications/asa/asa/obj/Debug/netcoreapp2.0/asa.csprojAssemblyReference.cache
+/home/ssskram/Applications/asa/asa/obj/Debug/netcoreapp2.0/asa.csproj.CoreCompileInputs.cache
+/home/ssskram/Applications/asa/asa/obj/Debug/netcoreapp2.0/asa.AssemblyInfoInputs.cache
+/home/ssskram/Applications/asa/asa/obj/Debug/netcoreapp2.0/asa.AssemblyInfo.cs
+/home/ssskram/Applications/asa/asa/obj/Debug/netcoreapp2.0/asa.dll
+/home/ssskram/Applications/asa/asa/obj/Debug/netcoreapp2.0/asa.pdb
